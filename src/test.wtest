@@ -1,0 +1,120 @@
+import semillas.*
+
+describe "tests" {
+	
+	const p1 = new Parcela(tipo = parcelaEcologica,  largo = 10, ancho = 8,  horasDeSol = 6)
+	const p2 = new Parcela(tipo = parcelaEcologica,  largo = 5,  ancho = 12, horasDeSol = 6)
+	const p3 = new Parcela(tipo = parcelaEcologica,  largo = 15, ancho = 5,  horasDeSol = 6)
+	const p4 = new Parcela(tipo = parcelaEcologica,  largo = 9,  ancho = 3,  horasDeSol = 6)
+	const p5 = new Parcela(tipo = parcelaEcologica,  largo = 3,  ancho = 5,  horasDeSol = 6)
+	const p6 = new Parcela(tipo = parcelaIndustrial, largo = 20, ancho = 10, horasDeSol = 6)
+	const p7 = new Parcela(tipo = parcelaIndustrial, largo = 6,  ancho = 15, horasDeSol = 6)
+	const p8 = new Parcela(tipo = parcelaIndustrial, largo = 10, ancho = 10, horasDeSol = 6)
+	const p9 = new Parcela(tipo = parcelaIndustrial, largo = 9,  ancho = 12, horasDeSol = 6)
+	
+	const m1 = new Menta(anoDeObtencion = 1999, altura = 0.5)
+	const m2 = new Menta(anoDeObtencion = 2003, altura = 0.3)
+	const m3 = new Menta(anoDeObtencion = 1987, altura = 1.5)
+	const m4 = new Menta(anoDeObtencion = 2018, altura = 0.1)
+	const m5 = new Menta(anoDeObtencion = 2000, altura = 0.2)
+
+	const h1 = new HierbaBuena(anoDeObtencion = 1999, altura = 0.4)
+	const h2 = new HierbaBuena(anoDeObtencion = 1990, altura = 0.5)
+	const h3 = new HierbaBuena(anoDeObtencion = 2012, altura = 0.3)
+
+	const s1 = new Soja(anoDeObtencion = 1999, altura = 1)
+	const s2 = new Soja(anoDeObtencion = 1979, altura = 1.5)
+	const s3 = new Soja(anoDeObtencion = 2010, altura = 0.4)
+
+	const t1 = new SojaTransgenica(anoDeObtencion = 2003, altura = 0.8)
+	const t2 = new SojaTransgenica(anoDeObtencion = 2012, altura = 0.4)
+
+	const q1 = new Quinoa(anoDeObtencion = 2008, altura = 0.5, horasDeSol = 15)
+	const q2 = new Quinoa(anoDeObtencion = 1989, altura = 2.1, horasDeSol = 5)
+	const q3 = new Quinoa(anoDeObtencion = 1995, altura = 1.5, horasDeSol = 7)
+	const q4 = new Quinoa(anoDeObtencion = 2004, altura = 0.9, horasDeSol = 12)
+	const q5 = new Quinoa(anoDeObtencion = 1980, altura = 2.5, horasDeSol = 10)
+	const q6 = new Quinoa(anoDeObtencion = 1987, altura = 2.3, horasDeSol = 3)
+
+	fixture {
+		inta.parcelas( [p1, p2, p3, p4, p5, p6, p7, p8, p9] )
+		p1.agregar(m1)
+		p1.agregar(h1)
+		p1.agregar(s1)
+		p1.agregar(q1)
+		p2.agregar(m2)
+		p2.agregar(h2)
+		p2.agregar(s2)
+		p2.agregar(q2)
+		p3.agregar(m3)
+		p3.agregar(h3)
+		p3.agregar(s3)
+		p3.agregar(q3)
+		p4.agregar(m4)
+		p4.agregar(t1)
+		p4.agregar(q4)
+		p5.agregar(m5)
+		p5.agregar(t2)
+		p5.agregar(q5)
+	}
+	
+	//test de INTA
+	test "cantidad de plantas" {
+		assert.equals(18, inta.parcelas().sum( { parcela => parcela.plantas().size() } ))
+	}
+	
+	test "promedio de plantas" {
+		assert.equals(2, inta.promedioDePlantas())
+	}
+	
+	test "parcela mas autosustentable" {
+		assert.equals(p3, inta.parcelaMasAutosustentable())
+	}
+	
+	//test de parcelas
+	test "hay problemas" {
+		assert.that(p2.hayProblemas())
+	}
+	
+	test "agregar" {
+		assert.throwsException( { p5.agregar(h1) } )
+		assert.throwsException( { p1.agregar(q6) } )
+	}
+	
+	test "superficie" {
+		assert.equals(80, p1.superficie())
+	}
+	
+	test "capacidad" {
+		assert.equals(3, p5.capacidad())
+	}
+	
+	//test de plantas
+	test "es fuerte" {
+		assert.that(q1.esFuerte())
+		assert.notThat(q6.esFuerte())
+	}
+	
+	test "horas de sol" {
+		assert.equals(q1.horasDeSol(), 15)
+	}
+	
+	test "se asocia bien a" {
+		assert.that(m1.seAsociaBienA(p1))
+		assert.notThat(s1.seAsociaBienA(p1))
+	}
+	
+	test "es ideal" {
+		assert.that(m1.esIdeal(p1))
+		assert.notThat(s1.esIdeal(p1))
+	}
+	
+	test "da semillas" {
+		assert.that(m1.daSemillas())
+		assert.notThat(m2.daSemillas())
+	}
+	
+	test "espacio que ocupa" {
+		assert.equals(1.5, m1.espacioQueOcupa())
+	}
+}
